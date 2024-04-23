@@ -3,7 +3,7 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-17 16:24:01
  * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-19 16:03:53
+ * @LastEditTime: 2024-04-23 11:44:48
  */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,6 +13,7 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BookModule } from './modules/book/book.module';
+import { MenuModule } from './modules/menu/menu.module';
 import dataBaseConfig from './config/dataBaseConfig';
 
 @Module({
@@ -20,6 +21,7 @@ import dataBaseConfig from './config/dataBaseConfig';
     ConfigModule.forRoot({
       envFilePath: ['.env.', `.env.${process.env.NODE_ENV}`],
       load: [dataBaseConfig],
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -32,11 +34,14 @@ import dataBaseConfig from './config/dataBaseConfig';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         autoLoadEntities: true,
+        // synchronize: process.env.NODE_ENV !== 'prod' ? false : true,
+        synchronize: true,
       }),
     }),
     UserModule,
     AuthModule,
     BookModule,
+    MenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],
