@@ -3,7 +3,7 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-18 16:30:10
  * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-19 16:21:25
+ * @LastEditTime: 2024-04-22 14:37:58
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,5 +38,9 @@ export class UserService {
     user.role = createUserDto.role;
     user.nickname = createUserDto.nickname;
     return this.usersRepository.save(user);
+  }
+
+  findByUsername(username: string): Promise<User> {
+    return this.usersRepository.findOneBy({ username });
   }
 }
