@@ -3,7 +3,7 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-17 16:24:01
  * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-23 11:44:48
+ * @LastEditTime: 2024-04-24 11:43:13
  */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -34,8 +34,8 @@ import dataBaseConfig from './config/dataBaseConfig';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         autoLoadEntities: true,
-        // synchronize: process.env.NODE_ENV !== 'prod' ? false : true,
-        synchronize: true,
+        logging: true,
+        // synchronize: true,
       }),
     }),
     UserModule,

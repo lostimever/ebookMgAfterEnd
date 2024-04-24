@@ -36,11 +36,15 @@ export class Menu {
 
   // 1-是 0-否
   @Column()
-  keepalive: number;
+  keepalive: string;
 
   // 1-是 0-否
   @Column({ default: '0' })
   isExt: string;
+
+  // 1-启用 0-禁用
+  @Column({ default: '0' })
+  status: string;
 
   @Column()
   permission: string;
@@ -51,4 +55,10 @@ export class Menu {
   // 0-目录 1-菜单 2-按钮
   @Column({ default: '0' })
   type: string;
+
+  @Column()
+  createTime: Date;
+
+  @Column()
+  updateTime: Date;
 }
