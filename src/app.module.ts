@@ -3,11 +3,12 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-17 16:24:01
  * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-24 11:43:13
+ * @LastEditTime: 2024-04-24 15:09:42
  */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
@@ -18,6 +19,7 @@ import dataBaseConfig from './config/dataBaseConfig';
 
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: ['.env.', `.env.${process.env.NODE_ENV}`],
       load: [dataBaseConfig],
@@ -34,7 +36,7 @@ import dataBaseConfig from './config/dataBaseConfig';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         autoLoadEntities: true,
-        logging: true,
+        // logging: true,
         // synchronize: true,
       }),
     }),

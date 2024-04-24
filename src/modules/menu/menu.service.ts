@@ -3,7 +3,7 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-23 10:01:24
  * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-24 11:52:40
+ * @LastEditTime: 2024-04-24 15:28:50
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -61,9 +61,7 @@ export class MenuService {
       return result;
     };
 
-    const result = buildMenuTree(routes);
-    console.log('🚀 ~ MenuService ~ getRoutes ~ result:', result);
-    return result;
+    return buildMenuTree(routes);
   }
 
   addMenu(createMenuDto: CreateMenuDto) {

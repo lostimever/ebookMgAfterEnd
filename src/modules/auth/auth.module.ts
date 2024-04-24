@@ -3,7 +3,7 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-18 14:35:38
  * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-22 17:02:16
+ * @LastEditTime: 2024-04-24 16:29:47
  */
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
