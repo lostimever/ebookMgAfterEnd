@@ -3,7 +3,7 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-17 16:24:01
  * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-24 15:09:42
+ * @LastEditTime: 2024-04-25 09:14:50
  */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,10 +16,19 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BookModule } from './modules/book/book.module';
 import { MenuModule } from './modules/menu/menu.module';
 import dataBaseConfig from './config/dataBaseConfig';
+import { pinoHttpOption } from './exception/pinoHttpOption';
 
 @Module({
   imports: [
-    LoggerModule.forRoot(),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => {
+        return {
+          pinoHttp: { ...pinoHttpOption(config.get('NODE_ENV')) },
+        };
+      },
+    }),
     ConfigModule.forRoot({
       envFilePath: ['.env.', `.env.${process.env.NODE_ENV}`],
       load: [dataBaseConfig],
