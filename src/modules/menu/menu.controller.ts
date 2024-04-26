@@ -1,4 +1,10 @@
-import { wrapperResponse } from 'src/utils';
+/*
+ * @Description:
+ * @Author: lostimever 173571145@qq.com
+ * @Date: 2024-04-23 10:01:41
+ * @LastEditors: lostimever 173571145@qq.com
+ * @LastEditTime: 2024-04-25 15:31:55
+ */
 import { MenuService } from './menu.service';
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 
@@ -7,33 +13,42 @@ export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
   @Get('all')
-  getAllMenus() {
-    return wrapperResponse(this.menuService.findAll(), '获取菜单成功');
+  async getAllMenus() {
+    return {
+      message: '获取菜单成功',
+      data: await this.menuService.findAll(),
+    };
   }
 
   @Get('routers')
-  getRoutes() {
-    return wrapperResponse(this.menuService.getRoutes(), '获取路由成功');
+  async getRoutes() {
+    return {
+      data: await this.menuService.getRoutes(),
+      message: '获取路由成功',
+    };
   }
 
   @Post('add')
-  addMenu(@Body() body) {
-    return wrapperResponse(this.menuService.addMenu(body), '添加菜单成功');
+  async addMenu(@Body() body) {
+    return {
+      message: '添加菜单成功',
+      data: await this.menuService.addMenu(body),
+    };
   }
 
   @Put('update')
-  editMenu(@Body() body) {
-    return wrapperResponse(
-      this.menuService.editMenu(body.id, body),
-      '修改菜单成功',
-    );
+  async editMenu(@Body() body) {
+    return {
+      data: await this.menuService.editMenu(body.id, body),
+      message: '修改菜单成功',
+    };
   }
 
   @Put('delete')
-  deleteMenu(@Body() body) {
-    return wrapperResponse(
-      this.menuService.removeMenu(body.id),
-      '删除菜单成功',
-    );
+  async deleteMenu(@Body() body) {
+    return {
+      message: '删除菜单成功',
+      data: await this.menuService.removeMenu(body.id),
+    };
   }
 }

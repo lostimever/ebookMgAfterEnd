@@ -2,8 +2,8 @@
  * @Description:
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-22 14:51:11
- * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-24 16:23:40
+ * @LastEditors: lostimever 173571145@qq.com
+ * @LastEditTime: 2024-04-25 13:51:56
  */
 // 日期格式化库,很小巧,类moment 风格api
 import * as dayjs from 'dayjs';
@@ -44,7 +44,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    console.log('🚀 ~ HttpExceptionFilter ~ status:', status);
+    console.log('🚀 ~ 异常状态码:', status);
 
     // 此刻的时间
     const nowDate = dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss');

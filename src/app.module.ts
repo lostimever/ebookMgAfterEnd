@@ -2,8 +2,8 @@
  * @Description:
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-17 16:24:01
- * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-25 09:14:50
+ * @LastEditors: lostimever 173571145@qq.com
+ * @LastEditTime: 2024-04-25 14:04:22
  */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';

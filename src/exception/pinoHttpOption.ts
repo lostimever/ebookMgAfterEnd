@@ -2,11 +2,12 @@
  * @Description:
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-24 16:54:57
- * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-25 09:33:23
+ * @LastEditors: lostimever 173571145@qq.com
+ * @LastEditTime: 2024-04-25 14:52:12
  */
 // pino-http 配置
 // https://github.com/pinojs/pino-http
+import pino from 'pino';
 import * as PinoHttp from 'pino-http';
 import { join } from 'path';
 import dayjs from 'dayjs';
@@ -66,17 +67,7 @@ export function pinoHttpOption(envDevMode = 'development'): PinoHttp.Options {
         req.body = req.raw.body;
         return req;
       },
-      err(err: {
-        params: any;
-        raw: { params: any; query: any; body: any };
-        query: any;
-        body: any;
-      }) {
-        err.params = err.raw.params;
-        err.query = err.raw.query;
-        err.body = err.raw.body;
-        return err;
-      },
+      err: pino.stdSerializers.err,
     },
   };
 }

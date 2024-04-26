@@ -2,13 +2,12 @@
  * @Description:
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-18 14:35:46
- * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-24 16:34:48
+ * @LastEditors: lostimever 173571145@qq.com
+ * @LastEditTime: 2024-04-25 16:44:29
  */
 import { Body, Controller, Post } from '@nestjs/common';
 import { Public } from './public.decorator';
 import { AuthService } from './auth.service';
-import { wrapperResponse } from 'src/utils';
 
 @Controller('auth')
 export class AuthController {
@@ -16,10 +15,10 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  login(@Body() params) {
-    return wrapperResponse(
-      this.authService.login(params.username, params.password),
-      '登录成功',
-    );
+  async login(@Body() params) {
+    return {
+      data: await this.authService.login(params.username, params.password),
+      message: '登录成功',
+    };
   }
 }

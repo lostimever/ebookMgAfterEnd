@@ -2,8 +2,8 @@
  * @Description:
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-23 10:01:24
- * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-24 15:28:50
+ * @LastEditors: lostimever 173571145@qq.com
+ * @LastEditTime: 2024-04-25 15:47:33
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,9 +17,28 @@ export class MenuService {
     @InjectRepository(Menu)
     private readonly menuRespository: Repository<Menu>,
   ) {}
-  findAll() {
+  async findAll() {
     const sql = `select * , DATE_FORMAT(createTime, '%Y-%m-%d %H:%i:%s') as createTime from menu where active = 1`;
-    return this.menuRespository.query(sql);
+
+    const menus = await this.menuRespository.query(sql);
+    // 递归构建菜单树
+    const buildMenuTree = (items, parentId = null) => {
+      const result = [];
+      items.forEach((item) => {
+        const router = {
+          ...item,
+        };
+        if (item.parentMenu === parentId) {
+          const children = buildMenuTree(items, item.id);
+          if (children.length) {
+            router['children'] = children;
+          }
+          result.push(router);
+        }
+      });
+      return result;
+    };
+    return buildMenuTree(menus);
   }
 
   async getRoutes() {
@@ -80,7 +99,6 @@ export class MenuService {
     menu.orderNo = createMenuDto.orderNo;
     menu.type = createMenuDto.type;
 
-    console.log('🚀 ~ MenuService ~ addMenu ~ menu:', menu);
     return this.menuRespository.save(menu);
   }
 

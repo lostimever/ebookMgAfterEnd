@@ -2,8 +2,8 @@
  * @Description:
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-18 14:30:15
- * @LastEditors: wu_linfeng linfeng.wu@trinasolar.com
- * @LastEditTime: 2024-04-23 17:18:54
+ * @LastEditors: lostimever 173571145@qq.com
+ * @LastEditTime: 2024-04-25 15:30:56
  */
 import {
   Body,
@@ -16,18 +16,17 @@ import {
   Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { wrapperResponse } from 'src/utils';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('info')
-  getUserInfoByToken(@Req() requset) {
-    return wrapperResponse(
-      this.userService.findByUsername(requset.user.username),
-      '获取用户信息成功',
-    );
+  async getUserInfoByToken(@Req() requset) {
+    return {
+      data: await this.userService.findByUsername(requset.user.username),
+      message: '获取用户信息成功',
+    };
   }
 
   @Get(':id')
