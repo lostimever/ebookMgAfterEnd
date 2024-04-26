@@ -3,12 +3,15 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-25 16:30:36
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-04-25 17:27:56
+ * @LastEditTime: 2024-04-26 17:16:49
  */
+import * as fs from 'fs';
+import * as path from 'path';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './book.entity';
 import { Repository } from 'typeorm';
+import { EpubBook } from './epub-book';
 
 @Injectable()
 export class BookService {
@@ -42,5 +45,61 @@ export class BookService {
       pageSize,
       total,
     };
+  }
+
+  async uploadBook(file: Express.Multer.File) {
+    const destDir = '/usr/local/Cellar/nginx/1.25.5/www/books';
+    const originalName = decodeURIComponent(file.originalname);
+    const destPath = path.resolve(destDir, originalName);
+    file.originalname = originalName;
+    fs.writeFileSync(destPath, file.buffer);
+    const epubBook = new EpubBook(destPath, file);
+    const data = await epubBook.parseBook();
+    return {
+      originalName: originalName,
+      mimetype: file.mimetype,
+      size: file.size,
+      path: destPath,
+      dir: destDir,
+      data,
+    };
+  }
+
+  async addBook(params) {
+    const {
+      title,
+      author,
+      fileName,
+      category,
+      categoryText,
+      cover,
+      language,
+      publisher,
+      rootFile,
+    } = params;
+    const insertSql = `INSERT INTO book(
+        fileName,
+        cover,
+        title,
+        author,
+        publisher,
+        bookId,
+        category,
+        categoryText,
+        language,
+        rootFile
+      ) VALUES(
+        '${fileName}',
+        '${cover}',
+        '${title}',
+        '${author}',
+        '${publisher}',
+        '${fileName}',
+        '${category}',
+        '${categoryText}',
+        '${language}',
+        '${rootFile}'
+      )`;
+    return await this.bookRespository.query(insertSql);
   }
 }
