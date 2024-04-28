@@ -3,7 +3,7 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-25 16:30:36
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-04-26 17:16:49
+ * @LastEditTime: 2024-04-27 14:25:57
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -49,7 +49,8 @@ export class BookService {
 
   async uploadBook(file: Express.Multer.File) {
     const destDir = '/usr/local/Cellar/nginx/1.25.5/www/books';
-    const originalName = decodeURIComponent(file.originalname);
+    let originalName = decodeURIComponent(file.originalname);
+    originalName = originalName.replace(/\s+/g, '');
     const destPath = path.resolve(destDir, originalName);
     file.originalname = originalName;
     fs.writeFileSync(destPath, file.buffer);
@@ -59,7 +60,8 @@ export class BookService {
       originalName: originalName,
       mimetype: file.mimetype,
       size: file.size,
-      path: destPath,
+      url: `http://localhost:8089/books/${originalName}`,
+      coverUrl: `http://localhost:8089/books/cover/${data.cover}`,
       dir: destDir,
       data,
     };
