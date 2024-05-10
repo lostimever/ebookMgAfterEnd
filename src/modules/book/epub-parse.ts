@@ -56,7 +56,7 @@ export async function parseContentOpf(
   作者：${creator}
   语种：${language}
   出版社：${publisher}
-  封面：${cover}
+  封面：${decodeURIComponent(cover)}
   `);
   const rootDir = path.dirname(rootFile);
   const content = await parseContent(dir, 'toc.ncx', rootDir, fileName); // 解析目录
@@ -96,7 +96,7 @@ export async function parseContent(
     const nav = navMap[i];
     const id = nav['$'].id;
     const playOrder = +nav['$'].playOrder;
-    const text = nav.navLabel.text[0];
+    const text = nav.navLabel.text;
     const href = nav.content['$'].src;
     navData.push({
       id,

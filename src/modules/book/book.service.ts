@@ -3,7 +3,7 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-25 16:30:36
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-04-27 14:25:57
+ * @LastEditTime: 2024-05-10 17:27:18
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './book.entity';
 import { Repository } from 'typeorm';
 import { EpubBook } from './epub-book';
+import { BookParsingException } from './exceptions/book-parsing.exception';
 
 @Injectable()
 export class BookService {
@@ -48,23 +49,31 @@ export class BookService {
   }
 
   async uploadBook(file: Express.Multer.File) {
-    const destDir = '/usr/local/Cellar/nginx/1.25.5/www/books';
-    let originalName = decodeURIComponent(file.originalname);
-    originalName = originalName.replace(/\s+/g, '');
-    const destPath = path.resolve(destDir, originalName);
-    file.originalname = originalName;
-    fs.writeFileSync(destPath, file.buffer);
-    const epubBook = new EpubBook(destPath, file);
-    const data = await epubBook.parseBook();
-    return {
-      originalName: originalName,
-      mimetype: file.mimetype,
-      size: file.size,
-      url: `http://localhost:8089/books/${originalName}`,
-      coverUrl: `http://localhost:8089/books/cover/${data.cover}`,
-      dir: destDir,
-      data,
-    };
+    try {
+      const destDir = '/usr/local/Cellar/nginx/1.25.5/www/books';
+      let originalName = decodeURIComponent(file.originalname);
+      originalName = originalName.replace(/\s+/g, '');
+      const destPath = path.resolve(destDir, originalName);
+      file.originalname = originalName;
+      fs.writeFileSync(destPath, file.buffer);
+      const epubBook = new EpubBook(destPath, file);
+      const data = await epubBook.parseBook();
+
+      return {
+        originalName: originalName,
+        mimetype: file.mimetype,
+        size: file.size,
+        url: `http://localhost:8089/books/${originalName}`,
+        coverUrl: `http://localhost:8089/books/cover/${data.cover}`,
+        dir: destDir,
+        data,
+      };
+    } catch (error) {
+      console.log('🚀 解析失败呢:', error);
+      throw new BookParsingException(
+        '解析上传的书籍失败，请检查文件格式或内容',
+      );
+    }
   }
 
   async addBook(params) {

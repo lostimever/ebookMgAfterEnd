@@ -3,7 +3,7 @@
  * @Author: wu_linfeng linfeng.wu@trinasolar.com
  * @Date: 2024-04-24 15:46:58
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-04-25 16:44:53
+ * @LastEditTime: 2024-05-10 16:12:01
  */
 import {
   Injectable,
@@ -20,7 +20,7 @@ export class HttpStatusSuccess implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        console.log('🚀 ~ HttpStatusSuccess ~ map ~ data:', data);
+        // console.log('🚀 ~ HttpStatusSuccess ~ map ~ data:', data);
         return {
           code: HttpStatus.OK,
           message: data.message || '操作成功',
