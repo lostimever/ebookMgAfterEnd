@@ -3,9 +3,8 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-05-10 17:26:02
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-05-10 17:26:15
+ * @LastEditTime: 2024-05-10 17:40:29
  */
-// book/exceptions/book-parsing.exception.ts
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class BookParsingException extends HttpException {

@@ -17,6 +17,7 @@ import { BookModule } from './modules/book/book.module';
 import { MenuModule } from './modules/menu/menu.module';
 import dataBaseConfig from './config/dataBaseConfig';
 import { pinoHttpOption } from './exception/pinoHttpOption';
+import { ContentsModule } from './modules/contents/contents.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { pinoHttpOption } from './exception/pinoHttpOption';
     AuthModule,
     BookModule,
     MenuModule,
+    ContentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

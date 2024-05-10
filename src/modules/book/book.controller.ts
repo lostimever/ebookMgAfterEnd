@@ -3,7 +3,7 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-18 14:41:05
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-05-10 17:28:08
+ * @LastEditTime: 2024-05-10 21:18:03
  */
 import {
   Body,
@@ -91,9 +91,21 @@ export class BookController {
 
   @Post('add')
   async addBook(@Body() params) {
-    return {
-      data: await this.bookService.addBook(params),
-      message: '添加书籍成功',
-    };
+    try {
+      return {
+        data: await this.bookService.addBook(params),
+        message: '添加书籍成功',
+      };
+    } catch (error) {
+      console.log('🚀 ~ BookController ~ addBook ~ error:', error);
+      throw new HttpException(
+        {
+          message: '添加书籍失败',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

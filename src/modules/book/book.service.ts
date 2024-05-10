@@ -3,7 +3,7 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-25 16:30:36
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-05-10 17:27:18
+ * @LastEditTime: 2024-05-10 17:40:40
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -69,7 +69,6 @@ export class BookService {
         data,
       };
     } catch (error) {
-      console.log('🚀 解析失败呢:', error);
       throw new BookParsingException(
         '解析上传的书籍失败，请检查文件格式或内容',
       );
