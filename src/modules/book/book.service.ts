@@ -3,7 +3,7 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-25 16:30:36
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-05-11 16:33:05
+ * @LastEditTime: 2024-05-11 17:01:52
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -13,12 +13,15 @@ import { Book } from './book.entity';
 import { Repository } from 'typeorm';
 import { EpubBook } from './epub-book';
 import { BookUploadException } from './exceptions/book-upload.exception';
+import { Contents } from '../contents/contents.entity';
 
 @Injectable()
 export class BookService {
   constructor(
     @InjectRepository(Book)
     private readonly bookRespository: Repository<Book>,
+    @InjectRepository(Contents)
+    private readonly contentsRepository: Repository<Contents>,
   ) {}
 
   async getBookList(params) {
@@ -135,5 +138,14 @@ export class BookService {
 
     await this.bookRespository.update(id, updateParams);
     return this.bookRespository.findOne(id);
+  }
+
+  async deleteBook(id: number) {
+    try {
+      await this.contentsRepository.delete({ pid: id });
+      return await this.bookRespository.delete(id);
+    } catch (error) {
+      console.log('🚀 ~ BookService ~ deleteBook ~ error:', error);
+    }
   }
 }

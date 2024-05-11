@@ -51,13 +51,11 @@ export async function parseContentOpf(
   const identifiers = metadata['dc:identifier']; // 书籍唯一标识
   const isbnIdentifier = identifiers.find(
     (identifier: any) =>
-      identifier['_'].toLowerCase().includes('isbn') ||
-      (identifier['$'] && identifier['$'].id?.toLowerCase().includes('isbn')) ||
-      (identifier['$'] &&
-        identifier['$']['opf:scheme']?.toLowerCase().includes('isbn')),
+      identifier['_']?.toLowerCase().startsWith('isbn') ||
+      identifier['$']?.id?.toLowerCase().startsWith('isbn') ||
+      identifier['$']?.['opf:scheme']?.toLowerCase().startsWith('isbn'),
   );
-  // console.log('🚀 ~ isbnIdentifier:', isbnIdentifier);
-  const isbn = isbnIdentifier ? isbnIdentifier['_'] : '';
+  const isbn = isbnIdentifier ? isbnIdentifier['_'] : ''; //isbn 号
   const metadataMeta = metadata.meta;
   let coverMeta = '';
   if (isArray(metadataMeta)) {

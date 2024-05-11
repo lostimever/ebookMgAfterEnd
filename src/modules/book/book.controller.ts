@@ -3,11 +3,12 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-18 14:41:05
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-05-11 11:16:11
+ * @LastEditTime: 2024-05-11 16:56:55
  */
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -124,6 +125,25 @@ export class BookController {
       throw new HttpException(
         {
           message: '更新书籍失败',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Delete('delete')
+  async deleteBook(@Body() body) {
+    try {
+      return {
+        data: await this.bookService.deleteBook(body.id),
+        message: '删除书籍成功',
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: '删除书籍失败',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: error.message,
         },
