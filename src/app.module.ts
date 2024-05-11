@@ -18,6 +18,7 @@ import { MenuModule } from './modules/menu/menu.module';
 import dataBaseConfig from './config/dataBaseConfig';
 import { pinoHttpOption } from './exception/pinoHttpOption';
 import { ContentsModule } from './modules/contents/contents.module';
+import { ClassifyModule } from './modules/classify/classify.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { ContentsModule } from './modules/contents/contents.module';
     BookModule,
     MenuModule,
     ContentsModule,
+    ClassifyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

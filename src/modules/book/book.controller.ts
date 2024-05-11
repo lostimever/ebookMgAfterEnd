@@ -3,7 +3,7 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-18 14:41:05
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-05-10 21:18:03
+ * @LastEditTime: 2024-05-11 11:16:11
  */
 import {
   Body,
@@ -13,13 +13,14 @@ import {
   HttpStatus,
   ParseFilePipeBuilder,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { BookParsingException } from './exceptions/book-parsing.exception';
+import { BookUploadException } from './exceptions/book-upload.exception';
 
 @Controller('book')
 export class BookController {
@@ -74,7 +75,7 @@ export class BookController {
         message: '上传成功',
       };
     } catch (error) {
-      if (error instanceof BookParsingException) {
+      if (error instanceof BookUploadException) {
         throw error;
       }
 
@@ -97,10 +98,32 @@ export class BookController {
         message: '添加书籍成功',
       };
     } catch (error) {
-      console.log('🚀 ~ BookController ~ addBook ~ error:', error);
+      if (error instanceof BookUploadException) {
+        throw error;
+      }
+
       throw new HttpException(
         {
           message: '添加书籍失败',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Put('update')
+  updateBook(@Body() body) {
+    try {
+      return {
+        data: this.bookService.updateBook(body),
+        message: '更新书籍成功',
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: '更新书籍失败',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: error.message,
         },

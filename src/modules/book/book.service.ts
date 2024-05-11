@@ -3,7 +3,7 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-25 16:30:36
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-05-10 17:40:40
+ * @LastEditTime: 2024-05-11 16:33:05
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './book.entity';
 import { Repository } from 'typeorm';
 import { EpubBook } from './epub-book';
-import { BookParsingException } from './exceptions/book-parsing.exception';
+import { BookUploadException } from './exceptions/book-upload.exception';
 
 @Injectable()
 export class BookService {
@@ -35,6 +35,7 @@ export class BookService {
 
     const [rows, total] = await this.bookRespository
       .createQueryBuilder('book')
+      .leftJoinAndSelect('book.classify', 'classify')
       .where(where.join(' AND '))
       .skip((page - 1) * pageSize)
       .take(pageSize)
@@ -69,9 +70,8 @@ export class BookService {
         data,
       };
     } catch (error) {
-      throw new BookParsingException(
-        '解析上传的书籍失败，请检查文件格式或内容',
-      );
+      console.log('🚀 ~ BookService ~ uploadBook ~ error:', error);
+      throw new BookUploadException('解析上传的书籍失败，请检查文件格式或内容');
     }
   }
 
@@ -81,35 +81,59 @@ export class BookService {
       author,
       fileName,
       category,
-      categoryText,
       cover,
       language,
       publisher,
       rootFile,
+      isbn,
     } = params;
-    const insertSql = `INSERT INTO book(
-        fileName,
-        cover,
-        title,
-        author,
-        publisher,
-        bookId,
-        category,
-        categoryText,
-        language,
-        rootFile
-      ) VALUES(
-        '${fileName}',
-        '${cover}',
-        '${title}',
-        '${author}',
-        '${publisher}',
-        '${fileName}',
-        '${category}',
-        '${categoryText}',
-        '${language}',
-        '${rootFile}'
-      )`;
-    return await this.bookRespository.query(insertSql);
+
+    const newBook = this.bookRespository.create({
+      fileName,
+      cover,
+      title,
+      author,
+      publisher,
+      bookId: fileName,
+      category,
+      language,
+      rootFile,
+      isbn,
+    });
+
+    try {
+      return await this.bookRespository.save(newBook);
+    } catch (error) {
+      console.log('🚀 ~ BookService ~ addBook ~ error:', error);
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new BookUploadException('已存在该书籍，请勿重复添加');
+      }
+    }
+  }
+
+  async updateBook(params) {
+    const { id, title, author, category, language, publisher, isbn } = params;
+    const updateParams: Partial<Book> = {};
+    if (title) {
+      updateParams.title = title;
+    }
+    if (author) {
+      updateParams.author = author;
+    }
+    if (category) {
+      updateParams.category = category;
+    }
+    if (language) {
+      updateParams.language = language;
+    }
+    if (publisher) {
+      updateParams.publisher = publisher;
+    }
+    if (isbn) {
+      updateParams.isbn = isbn;
+    }
+
+    await this.bookRespository.update(id, updateParams);
+    return this.bookRespository.findOne(id);
   }
 }

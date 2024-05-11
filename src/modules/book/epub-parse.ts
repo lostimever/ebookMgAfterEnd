@@ -4,6 +4,7 @@ import * as fse from 'fs-extra';
 import * as AdmZip from 'adm-zip';
 import * as XmlJS from 'xml2js';
 import { NGINX_PATH } from '../../utils/const';
+import { isArray } from 'src/utils/is';
 
 /**
  * Unzips a file located at the specified `bookPath` to the specified `unzipPath`.
@@ -42,12 +43,31 @@ export async function parseContentOpf(
   });
 
   const { metadata } = contentOpfXml.package;
+  console.log('🚀 ~ metadata:', metadata.meta);
   const title = metadata['dc:title']; // 书名
   const creator = metadata['dc:creator']; // 作者
   const language = metadata['dc:language']; // 语种
   const publisher = metadata['dc:publisher']; // 出版社
-  const coverMeta = metadata.meta.find((meta) => meta['$'].name === 'cover');
+  const identifiers = metadata['dc:identifier']; // 书籍唯一标识
+  const isbnIdentifier = identifiers.find(
+    (identifier: any) =>
+      identifier['_'].toLowerCase().includes('isbn') ||
+      (identifier['$'] && identifier['$'].id?.toLowerCase().includes('isbn')) ||
+      (identifier['$'] &&
+        identifier['$']['opf:scheme']?.toLowerCase().includes('isbn')),
+  );
+  // console.log('🚀 ~ isbnIdentifier:', isbnIdentifier);
+  const isbn = isbnIdentifier ? isbnIdentifier['_'] : '';
+  const metadataMeta = metadata.meta;
+  let coverMeta = '';
+  if (isArray(metadataMeta)) {
+    coverMeta = metadataMeta.find((meta) => meta['$'].name === 'cover');
+  } else {
+    coverMeta = metadataMeta['$'].name === 'cover' ? metadataMeta : '';
+  }
+
   const manifest = contentOpfXml.package.manifest.item;
+
   const coverRes = manifest.find((m) => m['$'].id === coverMeta['$'].content);
   const dir = path.dirname(contentFilePath);
   const cover = path.resolve(dir, coverRes['$'].href);
@@ -56,6 +76,7 @@ export async function parseContentOpf(
   作者：${creator}
   语种：${language}
   出版社：${publisher}
+  isbn：${isbn}
   封面：${decodeURIComponent(cover)}
   `);
   const rootDir = path.dirname(rootFile);
@@ -69,6 +90,7 @@ export async function parseContentOpf(
     cover,
     content,
     rootFile: rootFile,
+    isbn,
   };
 }
 export async function parseContent(
@@ -126,3 +148,20 @@ export function copyUnzipBook(tmpDir, dirName) {
   fse.mkdirpSync(bookDir);
   fse.copySync(tmpDir, bookDir);
 }
+
+// async function findIsbnInOpf(opfFilePath: string): Promise<string | null> {
+//   const data = fs.readFileSync(opfFilePath, 'utf8');
+//   const parser = new xml2js.Parser();
+//   const result = await parser.parseStringPromise(data);
+//   try {
+//     const identifiers = result.package.metadata[0]['dc:identifier'];
+//     const isbnIdentifier = identifiers.find(
+//       (identifier: any) =>
+//         identifier._.toLowerCase().includes('isbn') ||
+//         (identifier.$ && identifier.$.id?.toLowerCase().includes('isbn')),
+//     );
+//     return isbnIdentifier ? isbnIdentifier._ : null;
+//   } catch {
+//     return null;
+//   }
+// }

@@ -3,9 +3,17 @@
  * @Author: lostimever 173571145@qq.com
  * @Date: 2024-04-25 16:30:22
  * @LastEditors: lostimever 173571145@qq.com
- * @LastEditTime: 2024-04-25 16:46:54
+ * @LastEditTime: 2024-05-11 16:30:23
  */
-import { Entity, Column, Unique, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  Unique,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Classify } from '../classify/classify.entity';
 
 @Entity('book')
 export class Book {
@@ -32,10 +40,14 @@ export class Book {
   bookId: string;
 
   @Column()
-  category: number;
+  isbn: string;
 
   @Column()
-  categoryText: string;
+  category: number;
+
+  @ManyToOne(() => Classify, (classify) => classify.categoryName)
+  @JoinColumn({ name: 'category' })
+  classify: Classify;
 
   @Column()
   language: string;
